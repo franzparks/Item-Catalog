@@ -1,0 +1,56 @@
+{% extends "main.html" %}
+{% block content %}
+{% import '_helpers.html' as helpers %}
+
+
+
+	{% with messages = get_flashed_messages() %}
+      {% if messages %}
+       <div class="panel panel-title alert alert-success">   
+        <ul>
+        {% for message in messages %}
+        
+            <strong> {{ message }} </strong>
+        
+        {% endfor %}
+        </ul>
+        {% endif %}
+        </div>
+    {% endwith %}
+
+
+
+
+
+<div class="col-xs-3">
+		
+	{% for category in categories.items %}
+		<a href = "{{url_for('showCatalogItem', category_id = category.id,page=1)}}" class="btn btn-block btn-default btn-lg">
+				
+		      {{category.name}}	
+		</a>
+	{% endfor %}
+{{ helpers.paginate(categories) }}
+</div>
+
+
+<div class="col-xs-9">
+
+		{% for item in items.items %}
+		<div class="well">	
+          <span class="pull-right"> <img src="/static/img/{{item.pic}}" alt="Photo" class="img-responsive img-thumbnail" width="94" height="73" >
+		 </span>
+		 <div></div>
+		<h3>	
+		<strong>{{item.name}}</strong>
+		
+		</h3>
+
+		<span class="lead">{{item.description}}</span>
+								
+		</div>
+		{% endfor %}
+</div>
+	
+</div>
+{% endblock %}

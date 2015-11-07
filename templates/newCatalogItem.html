@@ -1,0 +1,32 @@
+{% extends "main.html" %}
+{% block content %}
+	<div class="col-xs-6">
+	
+	<div class="panel-title">
+		
+			<h1>New Catalog Item</h1>
+	</div>
+
+		<div class="well">
+			<form  action="{{url_for('addCatalogItem',category_id = category_id)}}" enctype="multipart/form-data"  method = "post">
+				<div class="form-group">
+					<label for="name">Name:</label>
+					<input type ="text" maxlength="50" class="form-control" name="name" placeholder="Name of the catalog item" required/>
+
+					<label for="description">Description:</label>
+					<textarea class="form-control" maxlength="250" rows="3" name="description" placeholder="Description of the catalog item" required></textarea>
+	
+                       <label for="pic">Picture</label>
+ 
+                        <input type="file" name="photo" required/>
+               
+					<button class="btn btn-default" id="submit" type="submit">Create</button>
+
+				</div>
+
+			</form>
+		</div>
+	</div>
+
+{% endblock %}
+

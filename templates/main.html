@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		
+		<meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+		<link rel=stylesheet type=text/css href="{{ url_for('static', filename='bootstrap-theme.css') }}">
+		<link rel=stylesheet type=text/css href="{{ url_for('static', filename='bootstrap.css') }}">
+
+	</head>
+	<body>
+		<div  class="container">
+		   <nav  class="navbar navbar-inverse">
+	           <div class="container-fluid">
+	           <div class="navbar-header">
+		            <a class="navbar-brand" href="{{url_for('showCatalog', page=1)}}">
+			          Show All Categories
+		            </a>
+	            </div>
+	            <div>
+                   <ul class="nav navbar-nav">
+                      <li class="active">
+                      <a href="{{url_for('addCategory')}}">
+			            <span class="" aria-hidden="true">Add Category</span>
+		              </a>
+                      </li>
+                   </ul>
+                   </div>
+
+               <div>
+    
+          
+                <ul class="nav navbar-nav navbar-right">   
+                  {% if 'email' in session %}
+
+                    <li><span class="navbar-brand">{{session['username']}}</span></li>
+
+                   <li><a href="{{url_for('gdisconnect')}}" id="myLogout"><span class="glyphicon glyphicon-log-out"></span> Log out</a></li>
+                   
+                  {%else%}
+                  <li><a href="{{url_for('showLogin')}}" id="myLogin"><span class="glyphicon glyphicon-log-in"></span> Log In</a></li>
+                
+                </ul>
+                {%endif%}
+
+	            </div>
+	            </div>
+            </nav>
+
+        
+
+            <div class="panel panel-body">
+
+			{% block content %}
+			{% endblock %}
+			</div>
+		</div>
+
+	</body>
+</html>

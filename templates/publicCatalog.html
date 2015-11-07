@@ -1,0 +1,64 @@
+{% extends "main.html" %}
+{% block content %}
+{% import '_helpers.html' as helpers %}
+
+{% with messages = get_flashed_messages() %}
+      {% if messages %}
+      
+        {% for message in messages %}
+
+        
+        {% if message.pub_type == "There is an issue with the log out process, please try again" %} 
+              
+         <div class="panel panel-title alert alert-danger" >  
+              {%else%}
+         <div class="panel panel-title alert alert-success">
+      
+         {% endif %}
+
+         <strong> {{ message }} </strong>
+        
+        {% endfor %}
+        {% endif %}
+        </div>
+    {% endwith %}
+
+
+
+<div class="col-xs-3">
+
+	
+	{% for category in categories.items %}
+
+		<a href = "{{url_for('showCatalogItem', category_id = category.id, page=1)}}" class="btn btn-block btn-default btn-lg">
+				
+		      {{category.name}}	
+		</a>
+	{% endfor %}
+
+{{ helpers.paginate(categories) }}
+	
+</div>
+
+
+<div  class="col-xs-9">
+      
+		{% for item in items.items %}
+		<div class="well">	
+          <span class="pull-right"> <img src="/static/img/{{item.pic}}" alt="Photo" class="img-thumbnail" width="100" height="85" >
+		 </span>
+		<h3>	
+		<strong>{{item.name}}</strong>
+		
+		</h3>
+
+		<p class="lead">{{item.description}}</p>
+								
+		</div>
+		{% endfor %}
+
+</div>
+
+{% endblock %}
+
+

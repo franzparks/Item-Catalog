@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+<meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+</head>
+<body onload="alert()">
+
+<div class="container">
+  
+  <!-- Modal -->
+  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          
+        </div>
+        <div class="modal-body alert alert-danger">
+          <p id="text" ></p>
+          <p id = "moreText" ></p>
+          
+        </div>
+        <div class="modal-footer">
+          <a type="button" class="btn btn-default "  id="back" href="{{url_for('showCatalog')}}">Back To Catalog</a>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+  
+</div>
+
+<script>
+
+ 
+
+function alert(){
+	var val = "{{val}}"
+
+	if( val === "edit category"){
+     $("#text").append("You are not authorized to edit category :  {{category.name}}");
+     $("#moreText").append("Please go back and edit your own category");
+	
+    }else if(val === "delete category"){
+    	$("#text").append("You are not authorized to delete category :  {{category.name}}");
+        $("#moreText").append("Please go back and delete your own category");
+    }else if( val === "edit item"){
+     $("#text").append("You are not authorized to edit items in this category");
+     $("#moreText").append("Please create your own category in order to edit catalog items");
+	
+    }else if(val === "delete item"){
+    	$("#text").append("You are not authorized to delete items in this category");
+        $("#moreText").append("Please create your own category in order to delete catalog items");
+
+    }else if(val === "add item to category"){
+    	$("#text").append("You are not authorized to add items to this category.");
+        $("#moreText").append("Please create your own category in order to add items.");
+    }
+
+
+   $("#myModal").modal();
+    
+}
+</script>
+</body>
+</html>
