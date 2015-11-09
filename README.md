@@ -70,14 +70,14 @@ The application has public features and features that require authentication and
 
 - The application has JSON and RSS feed APIs
 
-JSON:
+JSON Endpoints:
 
 -http://localhost:8000/catalog/JSON  (for all categories and their items)
--http://localhost:8000/catalog/<category>/item/JSON (for one category and its items)
--http://localhost:8000/catalog/<category>/item/<catalog_item_name>/JSON (for one item)
+-http://localhost:8000/catalog/category_name/item/JSON (for one category and its items)
+-http://localhost:8000/catalog/category_name/item/catalog_item_name/JSON (for one item)
 
-RSS:
--http://localhost:8000//catalog/recent.atom (for the most recent catalog item feeds)
+RSS Endpoint:
+-http://localhost:8000/catalog/recent.atom (for the most recent catalog item feeds)
 
 
 
