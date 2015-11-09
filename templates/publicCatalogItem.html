@@ -11,25 +11,20 @@
 
 	
 	{% if items.items !=[] %}	
-		
-
-		{% for item in items.items %}
-		<div class="well">	
-          <span class="pull-right"> <img src="/static/img/{{item.pic}}" alt="" class="img-responsive img-thumbnail" width="100" height="90" >
-		 </span>
-		<h3>	
-		<strong>{{item.name}}</strong>
-		
-		</h3>
-
-		<span class="lead">{{item.description}}</span>
-								
-		</div>
+		 {% for item in items.items %}
+          <ul class="items panel panel-body">
+          <li class="row thumbnail well">
+            <a href="{{url_for('showItemDetails', category_name= category.name, item_name = item.name)}}" class="thumb"><img src="/static/img/{{item.pic}}"></a>
+            <a href="{{url_for('showItemDetails', category_name= category.name, item_name = item.name)}}">{{item.name}}</a>
+            <p>{{item.description}}</p>
+          </li>
+          
+          </ul>
+	
 		{% endfor %}
 
 		{{ helpers.paginate(items) }}
-      </div>
 
 	{% endif %}
-
+</div>
 {% endblock %}

@@ -6,14 +6,21 @@
 
 	{% with messages = get_flashed_messages() %}
       {% if messages %}
-       <div class="panel panel-title alert alert-success">   
-        <ul>
+      
         {% for message in messages %}
+
         
-            <strong> {{ message }} </strong>
+        {% if message == "There is an issue with the log out process, please try again" %} 
+              
+         <div class="panel panel-title alert alert-warning" >  
+              {%else%}
+         <div class="panel panel-title alert alert-success">
+      
+         {% endif %}
+
+         <strong> {{ message }} </strong>
         
         {% endfor %}
-        </ul>
         {% endif %}
         </div>
     {% endwith %}
@@ -21,11 +28,10 @@
 
 
 
-
 <div class="col-xs-3">
 		
 	{% for category in categories.items %}
-		<a href = "{{url_for('showCatalogItem', category_id = category.id,page=1)}}" class="btn btn-block btn-default btn-lg">
+		<a href = "{{url_for('showCatalogItem', category_name = category.name)}}" class="btn btn-block btn-default btn-lg">
 				
 		      {{category.name}}	
 		</a>
@@ -34,22 +40,16 @@
 </div>
 
 
-<div class="col-xs-9">
-
-		{% for item in items.items %}
-		<div class="well">	
-          <span class="pull-right"> <img src="/static/img/{{item.pic}}" alt="Photo" class="img-responsive img-thumbnail" width="94" height="73" >
-		 </span>
-		 <div></div>
-		<h3>	
-		<strong>{{item.name}}</strong>
-		
-		</h3>
-
-		<span class="lead">{{item.description}}</span>
-								
-		</div>
-		{% endfor %}
+<div  class="col-xs-9">
+{% for item in items.items %}
+<ul class="items">
+          <li class="thumbnail well">
+            <a href="{{url_for('showItemDetails', category_name= item.category.name, item_name = item.name)}}" class="thumb"><img src="/static/img/{{item.pic}}"></a>
+            <a href="{{url_for('showItemDetails',category_name= item.category.name,  item_name = item.name)}}">{{item.name}}</a>
+            <p>{{item.description}}</p>
+          </li>
+</ul>
+{% endfor %}
 </div>
 	
 </div>

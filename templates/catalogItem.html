@@ -5,30 +5,26 @@
 <div class="col-xs-12">
 
 			<h1>{{ category.name }} </h1>
-		<!--	<figure class="creator">
-				<img src="{{ url_for('static', filename='blank_user.gif') }}">
-				<figcaption>Catalog item creator's name goes here</figcaption>
-			</figure>
-			</h1>-->
-	
+		
 	<span class="pull-right"> 
-     <a href='{{url_for('editCategory', category_id = category.id) }}'>Edit Category</a> | 
-	 <a href='{{url_for('deleteCategory', category_id = category.id) }}'>Delete Category</a>
+     
+	 <a href='{{url_for('editCategory', category_name = category.name) }}'>Edit Category</a> | 
+	 <a href='{{url_for('deleteCategory', category_name = category.name) }}'>Delete Category</a>
 	</span>
 
 
 
 	
   {% if items.items ==[] %}	
-		     <a href="{{url_for('addCatalogItem', category_id = category.id )}}">
+		     <a href="{{url_for('addCatalogItem', category_name = category.name )}}">
 				<button class="btn well" id="">
-					<span class="" aria-hidden="true"></span><h4>Add Catalog Items</h4>
+					<span class="" aria-hidden="true"></span><h5>Add Catalog Items</h5>
 				</button>
 			</a>		
 			{% else %}	
-		     <a href="{{url_for('addCatalogItem', category_id = category.id )}}">
-				<button class="btn well" id="">
-					<span class="" aria-hidden="true"></span><h4>Add More Catalog Items</h4>
+		     <a href="{{url_for('addCatalogItem', category_name = category.name )}}">
+				<button class="btn  well">
+					<span class="" aria-hidden="true"></span><h5>Add More Catalog Items</h5>
 				</button>
 			</a>
 			
@@ -51,27 +47,22 @@
 
 {% if items.items !=[] %}	
 		
-
-		{% for item in items.items %}
-		<div class="well">	
-          <span class="pull-right"> <img src="/static/img/{{item.pic}}" alt="" class="img-responsive" width="100" height="90" >
-		 </span>
-        <div></div>
-		<h3>	
-		<strong>{{item.name}}</strong>
-		
-		</h3>
-
-		<p class="lead">{{item.description}}</p>
-
-								
-		</div>
-		<a href='{{url_for('editCatalogItem', category_id = category.id, item_id=item.id ) }}'>Edit</a> | 
-							<a href='{{url_for('deleteCatalogItem', category_id = category.id, item_id=item.id ) }}'>Delete</a>
+	 {% for item in items.items %}
+          <ul class="items panel panel-body">
+          <li class="row thumbnail well">
+            <a href="{{url_for('showItemDetails', category_name= category.name, item_name = item.name)}}" class="thumb"><img src="/static/img/{{item.pic}}"></a>
+            <a href="{{url_for('showItemDetails', category_name= category.name, item_name = item.name)}}">{{item.name}}</a>
+            <p>{{item.description}}</p>
+          </li>
+          <a href='{{url_for('editCatalogItem', category_name = category.name, item_name=item.name ) }}'>Edit</a> | 
+							<a href='{{url_for('deleteCatalogItem', category_name = category.name, item_name=item.name ) }}'>Delete</a>
+          </ul>
+	
 		{% endfor %}
 
 		{{ helpers.paginate(items) }}
 
-      </div>
+      
 	{% endif %}
+	</div>
 {% endblock %}
