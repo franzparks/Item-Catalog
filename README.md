@@ -69,7 +69,9 @@ The application has public features and features that require authentication and
 -Error handling is in place for all users (authenticated) who try to edit or delete categories and items while not authorized to do so (e.g by using direct urls)
 
 - The application has JSON and RSS feed APIs
+
 JSON:
+
 - http://localhost:8000/catalog/JSON  (for all categories and their items)
 -http://localhost:8000/catalog/<category>/item/JSON (for one category and its items)
 -http://localhost:8000/catalog/<category>/item/<catalog_item_name>/JSON (for one item)
