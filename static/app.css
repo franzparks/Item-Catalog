@@ -24,6 +24,12 @@ body {
   
 }
 
+.italicized {
+  font-style: italic;
+  font-style: oblique;
+  font-color: #e0ffff;
+}
+
 /** Detail View **/
 img.item {
   float: left;
