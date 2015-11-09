@@ -21,7 +21,7 @@ session = DBSession()
 
 # Create dummy user
 User1 = User(name="Franzee", email="franz@udacity.com",
-             picture='https://pbs.twimg.com/profile_images/2671170543/18debd694829ed78203a5a36dd364160_400x400.png')
+             picture='/static/img/blank_user.gif')
 session.add(User1)
 session.commit()
 
@@ -31,96 +31,104 @@ category1 = Category(user_id=1, name="Soccer")
 session.add(category1)
 session.commit()
 
-catItem1 = CatalogItem(name="Jersey", description="Jerseys for the players",
-       pic="coming soon", category=category1, user_id=1)
+catItem1 = CatalogItem(name="Soccer Jersey", description="Jerseys for the players",
+       pic="soccer_jersey.jpg", category=category1, user_id=1)
 
 session.add(catItem1)
 session.commit()
 
 catItem2 = CatalogItem(name="Boots", description="Boots for the players",
-       pic="coming soon", category=category1,user_id=1)
+       pic="boot.jpg", category=category1,user_id=1)
 
 session.add(catItem2)
 session.commit()
 
 
 catItem3 = CatalogItem(name="Gloves", description="Gloves for the goal keepers",
-       pic="coming soon", category=category1, user_id=1 )
+       pic="gloves.jpeg", category=category1, user_id=1 )
 
 session.add(catItem3)
 session.commit()
 
-# Category one
-category2 = Category(user_id=1, name="Snowboarding")
+# Category two
+category2 = Category(user_id=1, name="Skydiving")
 
 session.add(category2)
 session.commit()
 
-catItem1 = CatalogItem(name="Jersey", description="Jerseys for the players",
-       pic="coming soon", category=category2, user_id=1)
+catItem1 = CatalogItem(name="Jumpsuit", description="Jumpsuits for the divers",
+       pic="jumpsuit.jpeg", category=category2, user_id=1)
 
 session.add(catItem1)
 session.commit()
 
-catItem2 = CatalogItem(name="Boots", description="Boots for the players",
-       pic="coming soon", category=category2,user_id=1)
+catItem2 = CatalogItem(name="Goggles", description="Goggles for the divers",
+       pic="goggles.jpeg", category=category2,user_id=1)
 
 session.add(catItem2)
 session.commit()
 
 
-catItem3 = CatalogItem(name="Gloves", description="Gloves for the goal keepers",
-       pic="coming soon", category=category2, user_id=1 )
+catItem3 = CatalogItem(name="Harness", description="Harness for the goal divers",
+       pic="harness.jpeg", category=category2, user_id=1 )
 
 session.add(catItem3)
 session.commit()
 
-# Category one
+catItem4 = CatalogItem(name="Parachute", description="Parachute for the goal divers",
+       pic="parachute.jpeg", category=category2, user_id=1 )
+
+session.add(catItem4)
+session.commit()
+
+
+# Category three
 category3 = Category(user_id=1, name="Basketball")
 
 session.add(category3)
 session.commit()
 
-catItem1 = CatalogItem(name="Jersey", description="Jerseys for the players",
-       pic="coming soon", category=category3, user_id=1)
+catItem1 = CatalogItem(name="Basketball Jersey", description="Jerseys for the players",
+       pic="basketball.jpeg", category=category3, user_id=1)
 
 session.add(catItem1)
 session.commit()
 
-catItem2 = CatalogItem(name="Boots", description="Boots for the players",
-       pic="coming soon", category=category3,user_id=1)
+catItem2 = CatalogItem(name="Sneakers", description="Sneakers for the players",
+       pic="nikes.jpg", category=category3,user_id=1)
 
 session.add(catItem2)
 session.commit()
 
 
-catItem3 = CatalogItem(name="Gloves", description="Gloves for the goal keepers",
-       pic="coming soon", category=category3, user_id=1 )
+catItem3 = CatalogItem(name="Ball", description="Ball for the players",
+       pic="ball.jpeg", category=category3, user_id=1 )
 
 session.add(catItem3)
 session.commit()
 
-# Category one
+
+# Category four
 category4 = Category(user_id=1, name="Golf")
 
 session.add(category4)
 session.commit()
 
-catItem1 = CatalogItem(name="Jersey", description="Jerseys for the players",
-       pic="coming soon", category=category4, user_id=1)
+catItem1 = CatalogItem(name="Golf Clubs", description="Golf clubs for the players",
+       pic="golf_clubs.jpeg", category=category4, user_id=1)
 
 session.add(catItem1)
 session.commit()
 
-catItem2 = CatalogItem(name="Boots", description="Boots for the players",
-       pic="coming soon", category=category4,user_id=1)
+catItem2 = CatalogItem(name="Golf Balls", description="Golf balls for the players",
+       pic="golf_ball.jpeg", category=category4,user_id=1)
 
 session.add(catItem2)
 session.commit()
 
 
-catItem3 = CatalogItem(name="Gloves", description="Gloves for the goal keepers",
-       pic="coming soon", category=category4, user_id=1 )
+catItem3 = CatalogItem(name="Golf Tees", description="Golf tees for the  players",
+       pic="tee.jpeg", category=category4, user_id=1 )
 
 session.add(catItem3)
 session.commit()
