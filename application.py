@@ -20,13 +20,15 @@ from werkzeug import secure_filename
 
 
 ALLOWED_EXT = set(['png', 'jpg', 'jpeg', 'gif'])
-# pagination
+# pagination constants
+# number of categories which can be shown per page
 CATEGORIES_PER_PAGE = 5
+#number of categories which can be shown per page
 ITEMS_PER_PAGE = 3
 
 app = Flask(__name__)
 
-#Photo upload folder
+#Photo upload folder --This is where photos are currently served when a user uploads them
 app.config['UPLOAD_FOLDER'] = './static/img/'
 #Extension for pagination
 app.jinja_env.add_extension('jinja2.ext.do')
