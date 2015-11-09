@@ -15,7 +15,9 @@ import httplib2
 import json
 from flask import make_response
 import requests
+import urllib
 from werkzeug import secure_filename
+
 
 ALLOWED_EXT = set(['png', 'jpg', 'jpeg', 'gif'])
 # pagination
@@ -218,17 +220,16 @@ def gdisconnect():
 
 
 # JSON APIs to view Catalog Information
-@app.route('/catalog/<int:category_id>/item/JSON')
-def categoryItemsJSON(category_id):
-    category = session.query(Category).filter_by(id=category_id).one()
-    items = session.query(CatalogItem).filter_by(
-        category_id=category_id).all()
+@app.route('/catalog/<category_name>/item/JSON')
+def categoryItemsJSON(category_name):
+    category = session.query(Category).filter_by(name=category_name).first()
+    items = session.query(CatalogItem).filter_by(category_name=category_name).all()
     return jsonify(Items=[i.serialize for i in items])
 
 
-@app.route('/catalog/<int:category_id>/item/<int:catalog_item_id>/JSON')
-def itemJSON(category_id, catalog_item_id):
-    item = session.query(CatalogItem).filter_by(id=catalog_item_id).one()
+@app.route('/catalog/<category_name>/item/<catalog_item_name>/JSON')
+def itemJSON(category_name, catalog_item_name):
+    item = session.query(CatalogItem).filter_by(name=catalog_item_name).first()
     return jsonify(item=item.serialize)
 
 
@@ -267,17 +268,18 @@ def addCategory():
         newCategory = Category(
             name=request.form['name'], user_id=login_session['user_id'])
         session.add(newCategory)
-        flash('New Category %s Successfully Created' % newCategory.name)
+        flash('New category %s successfully created' % newCategory.name)
         session.commit()
-        return redirect(url_for('showCatalog',page=1))
+        return redirect(url_for('showCatalog'))
     else:
         return render_template('addCategory.html')
 
 
 # Edit a catalog category
-@app.route('/catalog/<int:category_id>/edit/', methods=['GET', 'POST'])
-def editCategory(category_id):
-    editCategory = session.query(Category).filter_by(id=category_id).one()
+@app.route('/catalog/<category_name>/edit/', methods=['GET', 'POST'])
+def editCategory(category_name):
+    editCategory = session.query(Category).filter_by(name=category_name).first()
+    
     if 'username' not in login_session:
         return redirect('/login')
     if editCategory.user_id != login_session['user_id']:
@@ -285,39 +287,41 @@ def editCategory(category_id):
     if request.method == 'POST':
         if request.form['name']:
             editCategory.name = request.form['name']
-            flash('Category Successfully Edited %s' % editCategory.name)
-            return redirect(url_for('showCatalog',page=1))
+            flash('Category %s successfully edited' % editCategory.name)
+            return redirect(url_for('showCatalog', category_name=category_name))
     else:
         return render_template('editCategory.html', category=editCategory)
 
 
 # Delete a catalog category
-@app.route('/catalog/<int:category_id>/delete/', methods=['GET', 'POST'])
-def deleteCategory(category_id):
-    categoryToDelete = session.query(Category).filter_by(id=category_id).one()
+@app.route('/catalog/<category_name>/delete/', methods=['GET', 'POST'])
+def deleteCategory(category_name):
+
+    categoryToDelete = session.query(Category).filter_by(name=category_name).first()
+
     if 'username' not in login_session:
         return redirect('/login')
     if categoryToDelete.user_id != login_session['user_id']:
         return render_template('alerts.html',category=categoryToDelete, val = 'delete category')
     if request.method == 'POST':
         session.delete(categoryToDelete)
-        flash('%s Successfully Deleted' % categoryToDelete.name)
+        flash('%s Successfully deleted' % categoryToDelete.name)
         session.commit()
-        return redirect(url_for('showCatalog', category_id=category_id,page=1))
+        return redirect(url_for('showCatalog', category_name=category_name))
     else:
         return render_template('deleteCategory.html', category=categoryToDelete)
 
 
 
 # Show a category item
-@app.route('/catalog/<int:category_id>/',defaults={'page': 1})
-@app.route('/catalog/<int:category_id>/pg<int:page>')
-@app.route('/catalog/<int:category_id>/item/',defaults={'page': 1})
-@app.route('/catalog/<int:category_id>/item/pg<int:page>')
-def showCatalogItem(category_id,page):
-    category = session.query(Category).filter_by(id=category_id).one()
+@app.route('/catalog/<category_name>/',defaults={'page': 1})
+@app.route('/catalog/<category_name>/pg<int:page>')
+@app.route('/catalog/<category_name>/item/',defaults={'page': 1})
+@app.route('/catalog/<category_name>/item/pg<int:page>')
+def showCatalogItem(category_name,page):
+    category = session.query(Category).filter_by(name=category_name).first()
     creator = getUserInfo(category.user_id)
-    init_items = session.query(CatalogItem).filter_by(category_id=category_id)
+    init_items = session.query(CatalogItem).filter_by(category=category)
 
     items = paginate(init_items, page, ITEMS_PER_PAGE,False)
 
@@ -327,18 +331,29 @@ def showCatalogItem(category_id,page):
         return render_template('catalogItem.html', items=items, category=category, creator=creator)
 
 
+# Show a category item in detail
+@app.route('/catalog/<category_name>/item/<item_name>')
+def showItemDetails(category_name,item_name):
+    category = session.query(Category).filter_by(name=category_name).first()
+    creator = getUserInfo(category.user_id)
+    
+    item = session.query(CatalogItem).filter_by(name=item_name).first()
+
+    return render_template('itemDetails.html', item=item, category=category, creator=creator)    
+
+
 # Create a new catalog category item
-@app.route('/catalog/<int:category_id>/item/new/', methods=['GET', 'POST'])
-def addCatalogItem(category_id):
+@app.route('/catalog/<category_name>/item/new/', methods=['GET', 'POST'])
+def addCatalogItem(category_name):
     if 'username' not in login_session:
         return redirect('/login')
-    category = session.query(Category).filter_by(id=category_id).one()
-    print category.name
+    category = session.query(Category).filter_by(name=category_name).first()
+
     if login_session['user_id'] != category.user_id:
         return render_template('alerts.html',category=category, val = 'add item to category')
 
     if request.method == 'POST':
-           
+
         file = request.files['photo']
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename) 
@@ -347,22 +362,22 @@ def addCatalogItem(category_id):
         else:
             filename = "blank_user.gif"    
             
-        newItem = CatalogItem(name=request.form['name'], description=request.form['description'], pic=filename, category_id=category_id, user_id=category.user_id)
+        newItem = CatalogItem(name=request.form['name'], description=request.form['description'], pic=filename, category_id=category.id, user_id=category.user_id)
         session.add(newItem)
         session.commit()
-        flash('New Catalog Item %s Item Successfully Created' % (newItem.name))
-        return redirect(url_for('showCatalogItem', category_id=category_id))
+        flash('New catalog item %s successfully added to category' % (newItem.name))
+        return redirect(url_for('showCatalogItem', category_name=category_name))
     else:
-        return render_template('newCatalogItem.html', category_id=category_id)
+        return render_template('newCatalogItem.html', category_name=category_name)
 
 
 # Edit a catalog category item
-@app.route('/catalog/<int:category_id>/item/<int:item_id>/edit', methods=['GET', 'POST'])
-def editCatalogItem(category_id, item_id):
+@app.route('/catalog/<category_name>/item/<item_name>/edit', methods=['GET', 'POST'])
+def editCatalogItem(category_name, item_name):
     if 'username' not in login_session:
         return redirect('/login')
-    editedItem = session.query(CatalogItem).filter_by(id=item_id).one()
-    category = session.query(Category).filter_by(id=category_id).one()
+    editedItem = session.query(CatalogItem).filter_by(name=item_name).first()
+    category = session.query(Category).filter_by(name=category_name).first()
     
     if login_session['user_id'] != category.user_id:
         return render_template('alerts.html',category=category, item=editedItem, val = 'edit item')
@@ -380,29 +395,29 @@ def editCatalogItem(category_id, item_id):
             editedItem.pic = filename
         session.add(editedItem)
         session.commit()
-        flash('Category Item Successfully Edited')
-        return redirect(url_for('showCatalogItem', category_id=category_id))
+        flash('Category item %s successfully edited' % (editedItem.name))
+        return redirect(url_for('showCatalogItem', category_name=category_name))
     else:
-        return render_template('editCatalogItem.html', category_id=category_id, item_id=item_id, item=editedItem)
+        return render_template('editCatalogItem.html', category_name=category_name, item_name=item_name, item=editedItem)
 
 
 # Delete a category item
-@app.route('/catalog/<int:category_id>/item/<int:item_id>/delete', methods=['GET', 'POST'])
-def deleteCatalogItem(category_id, item_id):
+@app.route('/catalog/<category_name>/item/<item_name>/delete', methods=['GET', 'POST'])
+def deleteCatalogItem(category_name, item_name):
     if 'username' not in login_session:
         return redirect('/login')
-    category = session.query(Category).filter_by(id=category_id).one()
-    itemToDelete = session.query(CatalogItem).filter_by(id=item_id).one()
+    category = session.query(Category).filter_by(name=category_name).first()
+    itemToDelete = session.query(CatalogItem).filter_by(name=item_name).first()
     if login_session['user_id'] != category.user_id:
         return render_template('alerts.html', category=category,item=itemToDelete, val = 'delete item')
 
     if request.method == 'POST':
         session.delete(itemToDelete)
         session.commit()
-        flash('Catalog Item Successfully Deleted')
-        return redirect(url_for('showCatalogItem', category_id=category_id))
+        flash('Catalog Item %s successfully deleted' % (itemToDelete.name))
+        return redirect(url_for('showCatalogItem', category_name=category_name))
     else:
-        return render_template('deleteCatalogItem.html', item=itemToDelete)
+        return render_template('deleteCatalogItem.html', category=category, item=itemToDelete)
 
 
 if __name__ == '__main__':
