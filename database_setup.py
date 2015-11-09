@@ -1,6 +1,6 @@
 from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 from sqlalchemy import create_engine
 
 Base = declarative_base()
@@ -40,7 +40,7 @@ class CatalogItem(Base):
     description = Column(String(250))
     pic = Column(String(250))
     category_id = Column(Integer, ForeignKey('category.id'))
-    category = relationship(Category)
+    category = relationship(Category, backref=backref("catalog_items", cascade="all,delete"))
     user_id = Column(Integer, ForeignKey('user.id'))
     user = relationship(User)
 
