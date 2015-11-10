@@ -40,7 +40,7 @@
           <li class="thumbnail well">
             <a href="{{url_for('showItemDetails', category_name= item.category.name, item_name = item.name)}}" class="thumb"><img src="/static/img/{{item.pic}}"></a>
             <a href="{{url_for('showItemDetails', category_name= item.category.name, item_name = item.name)}}">{{item.name}}</a>
-            <a href="{{url_for('showItemDetails', category_name= category.name, item_name = item.name)}}">{{item.name}}</a>
+            <a href="{{url_for('showItemDetails', category_name= item.category.name, item_name = item.name)}}">{{item.name}}</a>
             <p>{{item.description}}</p>
           </li>
 </ul>
