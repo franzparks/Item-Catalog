@@ -13,8 +13,9 @@ body {
   float: right;
   margin: -0.5em 1em 1.5em 0;
   padding-bottom: 1em;
-  height: 100px;
-  width: 100px;
+  height: auto;
+  max-width: 100px;
+  width: 100%;
 }
 
 .items li {
@@ -29,6 +30,7 @@ body {
   font-style: oblique;
   font-color: #e0ffff;
 }
+
 
 /** Detail View **/
 img.item {

@@ -16,8 +16,6 @@ import json
 from flask import make_response
 import requests
 import urllib
-from urlparse import urljoin
-from werkzeug.contrib.atom import AtomFeed
 from werkzeug import secure_filename
 
 # Set of allowed file extentions for the item images
@@ -229,7 +227,7 @@ def gdisconnect():
 @app.route('/catalog/<category_name>/item/JSON')
 def categoryItemsJSON(category_name):
     category = session.query(Category).filter_by(name=category_name).first()
-    items = session.query(CatalogItem).filter_by(category_name=category_name).all()
+    items = session.query(CatalogItem).filter_by(category=category).all()
     return jsonify(Items=[i.serialize for i in items])
 
 #Endpoint to get a single item in a category
@@ -243,27 +241,6 @@ def itemJSON(category_name, catalog_item_name):
 def categoriesJSON():
     categories = session.query(Category).all()
     return jsonify(categories=[r.serialize for r in categories])
-
-#RSS API
-#Endpoint to get 15 most recent feeds
-@app.route('/catalog/recent.atom')
-def recent_feed():
-    feed = AtomFeed('Recent Catalog Items',feed_url=request.url, url=request.url_root)
-   
-   items = session.query(CatalogItem).order_by(desc(CatalogItem.category_id))[1:16]
-    for item in items:
-        feed.add(item.name, unicode(item.rendered_text),
-                 content_type='html',
-                 author=item.category.user.name,
-                 url=make_external(item.url),
-                 updated=item.last_update,
-                 published=item.published)
-    return feed.get_response()    
-
-
-#RSS API helper to make urls external
-def make_external(url):
-    return urljoin(request.url_root, url)    
 
 
 # Show all catalog categories 

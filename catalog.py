@@ -69,13 +69,13 @@ session.add(catItem2)
 session.commit()
 
 
-catItem3 = CatalogItem(name="Harness", description="Harness for the goal divers",
+catItem3 = CatalogItem(name="Harness", description="Harness for the divers",
        pic="harness.jpeg", category=category2, user_id=1 )
 
 session.add(catItem3)
 session.commit()
 
-catItem4 = CatalogItem(name="Parachute", description="Parachute for the goal divers",
+catItem4 = CatalogItem(name="Parachute", description="Parachute for the  divers",
        pic="parachute.jpeg", category=category2, user_id=1 )
 
 session.add(catItem4)

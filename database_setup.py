@@ -52,7 +52,7 @@ class CatalogItem(Base):
             'description': self.description,
             'id': self.id,
             'pic': self.pic,
-        }
+        }      
 
 
 engine = create_engine('sqlite:///catalog.db')
