@@ -25,7 +25,7 @@ User1 = User(name="Franzee", email="franz@udacity.com",
 session.add(User1)
 session.commit()
 
-# Category one
+# Category one Soccer
 category1 = Category(user_id=1, name="Soccer")
 
 session.add(category1)
@@ -50,7 +50,7 @@ catItem3 = CatalogItem(name="Gloves", description="Gloves for the goal keepers",
 session.add(catItem3)
 session.commit()
 
-# Category two
+# Category two SKydiving
 category2 = Category(user_id=1, name="Skydiving")
 
 session.add(category2)
@@ -82,7 +82,7 @@ session.add(catItem4)
 session.commit()
 
 
-# Category three
+# Category three Basketball
 category3 = Category(user_id=1, name="Basketball")
 
 session.add(category3)
@@ -108,7 +108,7 @@ session.add(catItem3)
 session.commit()
 
 
-# Category four
+# Category four golf
 category4 = Category(user_id=1, name="Golf")
 
 session.add(category4)
@@ -133,6 +133,37 @@ catItem3 = CatalogItem(name="Golf Tees", description="Golf tees for the  players
 session.add(catItem3)
 session.commit()
 
+
+# Category five Volley ball
+category5 = Category(user_id=1, name="Volley Ball")
+
+session.add(category5)
+session.commit()
+
+catItem1 = CatalogItem(name="Volley ball hand protector", description="Volley ball hand protector for the players",
+       pic="volley_hand_protector.jpeg", category=category5, user_id=1)
+
+session.add(catItem1)
+session.commit()
+
+catItem2 = CatalogItem(name="Volley ball knee pads", description="Volley ball knee pads for the players",
+       pic="volley_knee_pads.jpeg", category=category5,user_id=1)
+
+session.add(catItem2)
+session.commit()
+
+
+catItem3 = CatalogItem(name="Volley ball shoes", description="Volley ball shoes for the  players",
+       pic="volley_shoes.jpeg", category=category5, user_id=1 )
+
+session.add(catItem3)
+session.commit()
+
+catItem4 = CatalogItem(name="Volley ball socks", description="Volley ball socks for the  players",
+       pic="volley_socks.jpeg", category=category5, user_id=1 )
+
+session.add(catItem4)
+session.commit()
 
 
 
