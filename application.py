@@ -266,7 +266,7 @@ def make_external(url):
     return urljoin(request.url_root, url)    
 
 
-# Show all catalog categories
+# Show all catalog categories 
 @app.route('/', defaults={'page': 1})
 @app.route('/catalog/', defaults={'page': 1})
 @app.route('/catalog/pg<int:page>')
@@ -286,7 +286,7 @@ def showCatalog(page):
         return render_template('catalog.html', categories = categories, items = items)
 
 
-# Create a new category
+# Create a new category (authenticated users only)
 @app.route('/catalog/new/', methods=['GET', 'POST'])
 def addCategory():
     if 'username' not in login_session:
@@ -302,7 +302,7 @@ def addCategory():
         return render_template('addCategory.html')
 
 
-# Edit a catalog category
+# Edit a category (authenticated and authorized users only)
 @app.route('/catalog/<category_name>/edit/', methods=['GET', 'POST'])
 def editCategory(category_name):
     editCategory = session.query(Category).filter_by(name=category_name).first()
@@ -320,7 +320,7 @@ def editCategory(category_name):
         return render_template('editCategory.html', category=editCategory)
 
 
-# Delete a catalog category
+# Delete a category (authenticated and authorized users only)
 @app.route('/catalog/<category_name>/delete/', methods=['GET', 'POST'])
 def deleteCategory(category_name):
 
@@ -369,7 +369,7 @@ def showItemDetails(category_name,item_name):
     return render_template('itemDetails.html', item=item, category=category, creator=creator)    
 
 
-# Create a new catalog category item
+# Create a new category item (authenticated and authorized users only)
 @app.route('/catalog/<category_name>/item/new/', methods=['GET', 'POST'])
 def addCatalogItem(category_name):
     if 'username' not in login_session:
@@ -398,7 +398,7 @@ def addCatalogItem(category_name):
         return render_template('newCatalogItem.html', category_name=category_name)
 
 
-# Edit a catalog category item
+# Edit a category item (authenticated and authorized users only)
 @app.route('/catalog/<category_name>/item/<item_name>/edit', methods=['GET', 'POST'])
 def editCatalogItem(category_name, item_name):
     if 'username' not in login_session:
@@ -428,7 +428,7 @@ def editCatalogItem(category_name, item_name):
         return render_template('editCatalogItem.html', category_name=category_name, item_name=item_name, item=editedItem)
 
 
-# Delete a category item
+# Delete a category item (authenticated and authorized users only)
 @app.route('/catalog/<category_name>/item/<item_name>/delete', methods=['GET', 'POST'])
 def deleteCatalogItem(category_name, item_name):
     if 'username' not in login_session:
