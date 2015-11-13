@@ -36,7 +36,7 @@ app = Flask(__name__)
 csrf = SeaSurf(app)
 
 #Photo upload folder --This is where photos are currently served when a user uploads them
-app.config['UPLOAD_FOLDER'] = './data/img/'
+app.config['UPLOAD_FOLDER'] = './static/img/'
 #Limiting file uploads to 16MB
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 #Extension for pagination
@@ -224,8 +224,7 @@ def gdisconnect():
 @app.route('/catalog/<category_name>/item/JSON')
 def categoryItemsJSON(category_name):
     category = session.query(Category).filter_by(name=category_name).first()
-    items = session.query(CatalogItem).filter_by(category=category).all()
-    return jsonify(Items=[i.serialize for i in items])
+    return jsonify(Items=[i.serialize for i in category.catalog_items])
 
 #JSON endpoint to get a single item in a category
 @app.route('/catalog/<category_name>/item/<catalog_item_name>/JSON')
@@ -246,23 +245,36 @@ def categoriesJSON():
 @app.route('/catalog/XML')
 def categoriesXML():
     categories = session.query(Category).all()
-    data=[r.serialize for r in categories]
-    return xmlify(data, wrap="all", indent=" ")
+    # create dict
+    list_data = {}
+    for i in categories:
+        item = i.serialize
+        # serialise and add item to dict
+        item = {"Item"+str(item['id']): item}
+        list_data.update(item)
+    # return response class with application/xml mimetype
+    return app.response_class(xmlify(list_data, wrap="all", indent=" "), mimetype='application/xml')
 
 #XML endpoint to get all items in a category
 @app.route('/catalog/<category_name>/item/XML')
 def categoryItemsXML(category_name):
     category = session.query(Category).filter_by(name=category_name).first()
-    items = session.query(CatalogItem).filter_by(category=category).all()
-    data=[i.serialize for i in items]
-    return xmlify(data, wrap="all", indent=" ")
+    # create dict
+    list_data = {}
+    for i in category.catalog_items:
+        item = i.serialize
+        # serialise and add item to dict
+        item = {"Item"+str(item['id']): item}
+        list_data.update(item)
+    # return response class with application/xml mimetype
+    return app.response_class(xmlify(list_data, wrap="all", indent=" "), mimetype='application/xml')
 
 #Endpoint to get a single item in a category
 @app.route('/catalog/<category_name>/item/<catalog_item_name>/XML')
 def itemXML(category_name, catalog_item_name):
     item = session.query(CatalogItem).filter_by(name=catalog_item_name).first()
     data=item.serialize
-    return xmlify(data, wrap="all", indent=" ")
+    return app.response_class(xmlify(data, wrap="all", indent=" "), mimetype='application/xml')
     
 
 
@@ -360,7 +372,6 @@ def showCatalogItem(category_name,page):
     category = session.query(Category).filter_by(name=category_name).first()
     creator = user_dao.getUserInfo(category.user_id,session)
     init_items = session.query(CatalogItem).filter_by(category=category)
-
     items = paginate(init_items, page, ITEMS_PER_PAGE,False)
 
     if 'username' not in login_session or creator.id != login_session['user_id']:
@@ -421,7 +432,7 @@ def addCatalogItem(category_name):
 def editCatalogItem(category_name, item_name):
     
     editedItem = session.query(CatalogItem).filter_by(name=item_name).first()
-    category = session.query(Category).filter_by(name=category_name).first()
+    category = editedItem.category 
     
     if login_session['user_id'] != category.user_id:
         return render_template('alerts.html',category=category, item=editedItem, val = 'edit item')
@@ -455,9 +466,8 @@ def editCatalogItem(category_name, item_name):
 @app.route('/catalog/<category_name>/item/<item_name>/delete', methods=['GET', 'POST'])
 @login_required
 def deleteCatalogItem(category_name, item_name):
-    
-    category = session.query(Category).filter_by(name=category_name).first()
     itemToDelete = session.query(CatalogItem).filter_by(name=item_name).first()
+    category = itemToDelete.category 
     if login_session['user_id'] != category.user_id:
         return render_template('alerts.html', category=category,item=itemToDelete, val = 'delete item')
 
@@ -468,6 +478,7 @@ def deleteCatalogItem(category_name, item_name):
         return redirect(url_for('showCatalogItem', category_name=category_name))
     else:
         return render_template('deleteCatalogItem.html', category=category, item=itemToDelete)
+
 
 
 if __name__ == '__main__':

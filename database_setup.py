@@ -22,6 +22,8 @@ class Category(Base):
     name = Column(String(250), nullable=False,unique=True)
     user_id = Column(Integer, ForeignKey('user.id'))
     user = relationship(User)
+    catalog_items = relationship("CatalogItem", backref=backref("category"))
+
 
     @property
     def serialize(self):
@@ -40,7 +42,6 @@ class CatalogItem(Base):
     description = Column(String(250))
     pic = Column(String(250))
     category_id = Column(Integer, ForeignKey('category.id'))
-    category = relationship(Category, backref=backref("catalog_items", cascade="all,delete"))
     user_id = Column(Integer, ForeignKey('user.id'))
     user = relationship(User)
 
