@@ -1,10 +1,11 @@
 import os
 from flask import Flask, render_template, request, redirect, jsonify, url_for, flash, send_from_directory
+from flask.ext.seasurf import SeaSurf
 from sqlalchemy import create_engine, asc, desc
 from sqlalchemy.orm import sessionmaker
-
+import user_dao
 from flask.ext.sqlalchemy import BaseQuery
-
+from functools import wraps
 from database_setup import Base, Category, CatalogItem, User
 from flask import session as login_session
 import random
@@ -16,7 +17,10 @@ import json
 from flask import make_response
 import requests
 import urllib
+
 from werkzeug import secure_filename
+import dicttoxml
+from dict2xml import dict2xml as xmlify
 
 # Set of allowed file extentions for the item images
 ALLOWED_EXT = set(['png', 'jpg', 'jpeg', 'gif'])
@@ -28,8 +32,13 @@ ITEMS_PER_PAGE = 3
 
 app = Flask(__name__)
 
+# To prevent cross site request forgery
+csrf = SeaSurf(app)
+
 #Photo upload folder --This is where photos are currently served when a user uploads them
-app.config['UPLOAD_FOLDER'] = './static/img/'
+app.config['UPLOAD_FOLDER'] = './data/img/'
+#Limiting file uploads to 16MB
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 #Extension for pagination
 app.jinja_env.add_extension('jinja2.ext.do')
 
@@ -52,6 +61,14 @@ def paginate(sa_query, page, per_page=20, error_out=True):
   # We can now use BaseQuery methods like .paginate on our SA query
   return sa_query.paginate(page, per_page, error_out)
 
+#A decorator to ensure that users are logged in for some operations
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'username' not in login_session:
+            return redirect(url_for('showLogin', next=request.url))
+        return f(*args, **kwargs)
+    return decorated_function
 
 # Helper to check if photo getting uploaded has the right extention
 def allowed_file(filename):
@@ -67,9 +84,10 @@ def showLogin():
      
     return render_template('login.html', STATE=state)
 
-
+@csrf.exempt
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
+    '''This view is exempted from CSRF validation to allow login.'''
     # Validate state token
     if request.args.get('state') != login_session['state']:
         response = make_response(json.dumps('Invalid state parameter.'), 401)
@@ -144,9 +162,9 @@ def gconnect():
     login_session['email'] = data['email']
 
     # see if user exists, if it doesn't make a new one
-    user_id = getUserID(login_session['email'])
+    user_id = user_dao.getUserID(login_session['email'],session)
     if not user_id:
-        user_id = createUser(login_session)
+        user_id = user_dao.createUser(login_session,session)
     login_session['user_id'] = user_id
 
     output = ''
@@ -160,27 +178,6 @@ def gconnect():
     return output
 
 
-# User Helper Functions
-def createUser(login_session):
-    newUser = User(name=login_session['username'], email=login_session[
-                   'email'], picture=login_session['picture'])
-    session.add(newUser)
-    session.commit()
-    user = session.query(User).filter_by(email=login_session['email']).one()
-    return user.id
-
-
-def getUserInfo(user_id):
-    user = session.query(User).filter_by(id=user_id).one()
-    return user
-
-
-def getUserID(email):
-    try:
-        user = session.query(User).filter_by(email=email).one()
-        return user.id
-    except:
-        return None
 
 # DISCONNECT - Revoke a current user's token and reset their login_session
 
@@ -223,14 +220,14 @@ def gdisconnect():
 
 # JSON APIs to view Catalog Information
 
-#Endpoint to get all items in a category
+#JSON endpoint to get all items in a category
 @app.route('/catalog/<category_name>/item/JSON')
 def categoryItemsJSON(category_name):
     category = session.query(Category).filter_by(name=category_name).first()
     items = session.query(CatalogItem).filter_by(category=category).all()
     return jsonify(Items=[i.serialize for i in items])
 
-#Endpoint to get a single item in a category
+#JSON endpoint to get a single item in a category
 @app.route('/catalog/<category_name>/item/<catalog_item_name>/JSON')
 def itemJSON(category_name, catalog_item_name):
     item = session.query(CatalogItem).filter_by(name=catalog_item_name).first()
@@ -241,6 +238,32 @@ def itemJSON(category_name, catalog_item_name):
 def categoriesJSON():
     categories = session.query(Category).all()
     return jsonify(categories=[r.serialize for r in categories])
+
+
+#XML APIs to view Catalog information
+
+#XML endpoint to get all catalog categories and items
+@app.route('/catalog/XML')
+def categoriesXML():
+    categories = session.query(Category).all()
+    data=[r.serialize for r in categories]
+    return xmlify(data, wrap="all", indent=" ")
+
+#XML endpoint to get all items in a category
+@app.route('/catalog/<category_name>/item/XML')
+def categoryItemsXML(category_name):
+    category = session.query(Category).filter_by(name=category_name).first()
+    items = session.query(CatalogItem).filter_by(category=category).all()
+    data=[i.serialize for i in items]
+    return xmlify(data, wrap="all", indent=" ")
+
+#Endpoint to get a single item in a category
+@app.route('/catalog/<category_name>/item/<catalog_item_name>/XML')
+def itemXML(category_name, catalog_item_name):
+    item = session.query(CatalogItem).filter_by(name=catalog_item_name).first()
+    data=item.serialize
+    return xmlify(data, wrap="all", indent=" ")
+    
 
 
 # Show all catalog categories 
@@ -265,15 +288,21 @@ def showCatalog(page):
 
 # Create a new category (authenticated users only)
 @app.route('/catalog/new/', methods=['GET', 'POST'])
+@login_required
 def addCategory():
-    if 'username' not in login_session:
-        return redirect('/login')
+    
     if request.method == 'POST':
-        newCategory = Category(
-            name=request.form['name'], user_id=login_session['user_id'])
-        session.add(newCategory)
-        flash('New category %s successfully created' % newCategory.name)
-        session.commit()
+        newCategory = Category(name=request.form['name'], user_id=login_session['user_id'])
+
+        try:
+            session.add(newCategory)
+            session.commit()
+            flash('New category %s successfully created' % newCategory.name)
+        except Exception, e:
+            session.rollback()
+            flash('New category could not be added to the catalog due to an error, please make sure you are not using a category name already in the catalog')   
+            return redirect(url_for('showCatalog'))      
+
         return redirect(url_for('showCatalog'))
     else:
         return render_template('addCategory.html')
@@ -281,30 +310,35 @@ def addCategory():
 
 # Edit a category (authenticated and authorized users only)
 @app.route('/catalog/<category_name>/edit/', methods=['GET', 'POST'])
+@login_required
 def editCategory(category_name):
-    editCategory = session.query(Category).filter_by(name=category_name).first()
     
-    if 'username' not in login_session:
-        return redirect('/login')
+    editCategory = session.query(Category).filter_by(name=category_name).first()  
+
     if editCategory.user_id != login_session['user_id']:
         return render_template('alerts.html',category=editCategory, val = 'edit category')
     if request.method == 'POST':
         if request.form['name']:
             editCategory.name = request.form['name']
-            flash('Category %s successfully edited' % editCategory.name)
-            return redirect(url_for('showCatalog', category_name=category_name))
+            try:
+               session.add(editCategory)
+               session.commit()
+               flash('Category %s successfully edited' % editCategory.name)
+            except Exception, e:
+               session.rollback()
+               flash('Category could not be edited due to an error, please make sure you are not using a category name already in the catalog')   
+            return redirect(url_for('showCatalog'))      
     else:
         return render_template('editCategory.html', category=editCategory)
 
 
 # Delete a category (authenticated and authorized users only)
 @app.route('/catalog/<category_name>/delete/', methods=['GET', 'POST'])
+@login_required
 def deleteCategory(category_name):
 
     categoryToDelete = session.query(Category).filter_by(name=category_name).first()
 
-    if 'username' not in login_session:
-        return redirect('/login')
     if categoryToDelete.user_id != login_session['user_id']:
         return render_template('alerts.html',category=categoryToDelete, val = 'delete category')
     if request.method == 'POST':
@@ -324,7 +358,7 @@ def deleteCategory(category_name):
 @app.route('/catalog/<category_name>/item/pg<int:page>')
 def showCatalogItem(category_name,page):
     category = session.query(Category).filter_by(name=category_name).first()
-    creator = getUserInfo(category.user_id)
+    creator = user_dao.getUserInfo(category.user_id,session)
     init_items = session.query(CatalogItem).filter_by(category=category)
 
     items = paginate(init_items, page, ITEMS_PER_PAGE,False)
@@ -339,7 +373,7 @@ def showCatalogItem(category_name,page):
 @app.route('/catalog/<category_name>/item/<item_name>')
 def showItemDetails(category_name,item_name):
     category = session.query(Category).filter_by(name=category_name).first()
-    creator = getUserInfo(category.user_id)
+    creator = user_dao.getUserInfo(category.user_id,session)
     
     item = session.query(CatalogItem).filter_by(name=item_name).first()
 
@@ -348,9 +382,9 @@ def showItemDetails(category_name,item_name):
 
 # Create a new category item (authenticated and authorized users only)
 @app.route('/catalog/<category_name>/item/new/', methods=['GET', 'POST'])
+@login_required
 def addCatalogItem(category_name):
-    if 'username' not in login_session:
-        return redirect('/login')
+    
     category = session.query(Category).filter_by(name=category_name).first()
 
     if login_session['user_id'] != category.user_id:
@@ -365,11 +399,17 @@ def addCatalogItem(category_name):
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         else:
             filename = "blank_user.gif"    
-            
-        newItem = CatalogItem(name=request.form['name'], description=request.form['description'], pic=filename, category_id=category.id, user_id=category.user_id)
-        session.add(newItem)
-        session.commit()
-        flash('New catalog item %s successfully added to category' % (newItem.name))
+        try:
+            newItem = CatalogItem(name=request.form['name'], description=request.form['description'], pic=filename, category_id=category.id, user_id=category.user_id)
+            session.add(newItem)
+            session.commit()
+            flash('New catalog item %s successfully added to category' % (newItem.name))
+        except Exception, e:
+            session.rollback()
+            os.remove(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            flash('New catalog item could not be added to this category due to an error, please make sure you are not using a name already in the category')   
+            return redirect(url_for('showCatalogItem', category_name=category_name))      
+
         return redirect(url_for('showCatalogItem', category_name=category_name))
     else:
         return render_template('newCatalogItem.html', category_name=category_name)
@@ -377,9 +417,9 @@ def addCatalogItem(category_name):
 
 # Edit a category item (authenticated and authorized users only)
 @app.route('/catalog/<category_name>/item/<item_name>/edit', methods=['GET', 'POST'])
+@login_required
 def editCatalogItem(category_name, item_name):
-    if 'username' not in login_session:
-        return redirect('/login')
+    
     editedItem = session.query(CatalogItem).filter_by(name=item_name).first()
     category = session.query(Category).filter_by(name=category_name).first()
     
@@ -397,9 +437,15 @@ def editCatalogItem(category_name, item_name):
             filename = secure_filename(file.filename) 
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             editedItem.pic = filename
-        session.add(editedItem)
-        session.commit()
-        flash('Category item %s successfully edited' % (editedItem.name))
+        try:
+
+            session.add(editedItem)
+            session.commit()
+            flash('Category item %s successfully edited' % (editedItem.name))
+        except Exception, e:
+            session.rollback()
+            flash('Item name could not be changed, please make sure you are not using a name already in the category')   
+            return redirect(url_for('showCatalogItem', category_name=category_name))     
         return redirect(url_for('showCatalogItem', category_name=category_name))
     else:
         return render_template('editCatalogItem.html', category_name=category_name, item_name=item_name, item=editedItem)
@@ -407,9 +453,9 @@ def editCatalogItem(category_name, item_name):
 
 # Delete a category item (authenticated and authorized users only)
 @app.route('/catalog/<category_name>/item/<item_name>/delete', methods=['GET', 'POST'])
+@login_required
 def deleteCatalogItem(category_name, item_name):
-    if 'username' not in login_session:
-        return redirect('/login')
+    
     category = session.query(Category).filter_by(name=category_name).first()
     itemToDelete = session.query(CatalogItem).filter_by(name=item_name).first()
     if login_session['user_id'] != category.user_id:

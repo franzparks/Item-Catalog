@@ -1,0 +1,179 @@
+{
+  "all_items": [
+    {
+      "name": "Soccer Jersey",
+      "description": "Jerseys for the players",
+      "pic" : "soccer_jersey.jpg",
+      "category_id" : 1,
+      "user_id": 1
+    },
+    {
+      "name": "Boots",
+      "description": "Boots for the players",
+      "pic" : "boot.jpg",
+      "category_id" : 1,
+      "user_id": 1
+    },
+    {
+      "name": "Gloves",
+      "description": "Gloves for the goal keepers",
+      "pic" : "gloves.jpeg",
+      "category_id" : 1,
+      "user_id": 1
+    },
+
+    {
+      "name": "Shin Guards",
+      "description": "Shin Guards for the players",
+      "pic" : "Shin-Guards.png",
+      "category_id" : 1,
+      "user_id": 1
+    },
+
+   {
+      "name": "Jumpsuit",
+      "description": "Jumpsuits for the divers",
+      "pic" : "jumpsuit.jpeg",
+      "category_id" : 2,
+      "user_id": 1
+    },
+    {
+      "name": "Goggles",
+      "description": "Goggles for the divers",
+      "pic" : "goggles.jpeg",
+      "category_id" : 2,
+      "user_id": 1
+    },
+    {
+      "name": "Harness",
+      "description": "Harness for the divers",
+      "pic" : "harness.jpeg",
+      "category_id" : 2,
+      "user_id": 1
+    },
+    {
+      "name": "Parachute",
+      "description": "Parachute for the  divers",
+      "pic" : "parachute.jpeg",
+      "category_id" : 2,
+      "user_id": 1
+    },
+    {
+      "name": "Basketball Jersey",
+      "description": "Basketball jerseys for the players",
+      "pic" : "basketball.jpeg",
+      "category_id" : 3,
+      "user_id": 1
+    },
+    {
+      "name": "Sneakers",
+      "description": "Sneakers for the players",
+      "pic" : "nikes.jpg",
+      "category_id" : 3,
+      "user_id": 1
+    },
+    {
+      "name": "Basket ball",
+      "description": "Ball for the players",
+      "pic" : "ball.jpeg",
+      "category_id" : 3,
+      "user_id": 1
+    },
+
+    {
+      "name": "Golf Clubs",
+      "description": "Golf clubs for the players",
+      "pic" : "golf_clubs.jpeg",
+      "category_id" : 4,
+      "user_id": 1
+    },
+    {
+      "name": "Golf Balls",
+      "description": "Golf balls for the players",
+      "pic" : "golf_ball.jpeg",
+      "category_id" : 4,
+      "user_id": 1
+    },
+    {
+      "name": "Golf Tees",
+      "description": "Golf tees for the  players",
+      "pic" : "tee.jpeg",
+      "category_id" : 4,
+      "user_id": 1
+    },
+    {
+      "name": "Volley ball hand protector",
+      "description": "Volley ball hand protector for the players",
+      "pic" : "volley_hand_protector.jpeg",
+      "category_id" : 5,
+      "user_id": 1
+    },
+    {
+      "name": "Volley ball knee pads",
+      "description": "Volley ball knee pads for the players",
+      "pic" : "volley_knee_pads.jpeg",
+      "category_id" : 5,
+      "user_id": 1
+    },
+    {
+      "name": "Volley ball shoes",
+      "description": "Volley ball shoes for the  players",
+      "pic" : "volley_shoes.jpeg",
+      "category_id" : 5,
+      "user_id": 1
+    },
+    {
+    "name": "Volley ball socks",
+      "description": "Volley ball socks for the  players",
+      "pic" : "volley_socks.jpeg",
+      "category_id" : 5,
+      "user_id": 1
+    },
+
+
+    {
+      "name": "Fencing Mask",
+      "description": "Fencing mask for the players",
+      "pic" : "mask.jpg",
+      "category_id" : 6,
+      "user_id": 1
+    },
+    {
+      "name": "Fencing Sword",
+      "description": "Fencing Sword for the players",
+      "pic" : "sword.jpg",
+      "category_id" : 6,
+      "user_id": 1
+    },
+    {
+      "name": "Fencing Shoes",
+      "description": "Fencing Shoes for the  players",
+      "pic" : "fencing_shoes.jpg",
+      "category_id" : 6,
+      "user_id": 1
+    },
+    {
+    "name": "Fencing Jacket",
+      "description": "Fencing jacket for the  players",
+      "pic" : "fencing_jacket.jpg",
+      "category_id" : 6,
+      "user_id": 1
+    },
+    {
+    "name": "Fencing breeches",
+      "description": "Fencing breeches for the  players",
+      "pic" : "breeches.jpg",
+      "category_id" : 6,
+      "user_id": 1
+    },
+    {
+    "name": "Fencing Socks",
+      "description": "Fencing socks for the  players",
+      "pic" : "fencing_socks.jpg",
+      "category_id" : 6,
+      "user_id": 1
+    }
+
+    
+  ]
+}

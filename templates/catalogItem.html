@@ -33,16 +33,25 @@
 
 	{% with messages = get_flashed_messages() %}
       {% if messages %}
-          
-        
+      
         {% for message in messages %}
-         <div class="alert alert-success">
-            <strong > {{ message }} </strong>
-          </div>
-        {% endfor %}
-       
-        {% endif %}
+
+        
+          {% if message == "New catalog item could not be added to this category due to an error, please make sure you are not using a name already in the category" or message == "Item name could not be changed, please make sure you are not using a name already in the category"%} 
+              
+            <div class="panel panel-title alert alert-warning" >  
+              {%else%}
+             <div class="panel panel-title alert alert-success">
+      
+             {% endif %}
+
+            <strong> {{ message }} </strong>
+        
+              {% endfor %}
+              {% endif %}
+           </div>
     {% endwith %}
+
 
 
 {% if items.items !=[] %}	

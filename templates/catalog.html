@@ -10,7 +10,8 @@
         {% for message in messages %}
 
         
-        {% if message == "There is an issue with the log out process, please try again" %} 
+        {% if message == "There is an issue with the log out process, please try again" or
+        message == "New category could not be added to the catalog due to an error, please make sure you are not using a category name already in the catalog" or message == "Category could not be edited due to an error, please make sure you are not using a category name already in the catalog" %} 
               
          <div class="panel panel-title alert alert-warning" >  
               {%else%}

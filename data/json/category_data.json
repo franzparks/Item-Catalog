@@ -1,0 +1,45 @@
+{
+  "all_categories": [
+    {
+      "name": "Soccer",
+      "user_id": 1
+
+    },
+    {
+      "name": "Skydiving",
+      "user_id": 1
+
+    },
+    {
+      "name": "Basketball",
+      "user_id": 1
+
+    },
+    {
+      "name": "Golf",
+      "user_id": 1
+
+    },
+    {
+      "name": "Volley Ball",
+      "user_id": 1
+
+    },
+    {
+      "name": "Fencing",
+      "user_id": 1
+
+    },
+    {
+      "name": "Movies",
+      "user_id": 1
+
+    },
+    {
+      "name": "Music",
+      "user_id": 1
+
+    }
+    
+  ]
+}
