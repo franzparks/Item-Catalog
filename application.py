@@ -44,7 +44,8 @@ app.jinja_env.add_extension('jinja2.ext.do')
 
 
 CLIENT_ID = json.loads(
-    open('client_secrets.json', 'r').read())['web']['client_id']
+    open('client_secrets.json', 'r').read())['web']['client_id'] # add full path when deployed to a server
+        # e.g /var/www/catalog/catalog/client_secrets.json
 APPLICATION_NAME = "Catalog App"
 
 
