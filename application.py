@@ -51,7 +51,7 @@ APPLICATION_NAME = "Catalog App"
 #postgresql-infinite-95989
 
 # Connect to Database and create database session
-engine = create_engine('postgresql://catalog') #'sqlite:///catalog.db' #'postgresql://catalog'
+engine = create_engine('postgresql://postgresql-infinite-95989') #'sqlite:///catalog.db' #'postgresql://catalog'
 Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)

@@ -56,7 +56,7 @@ class CatalogItem(Base):
         }      
 
 
-engine = create_engine('postgresql://catalog') #'sqlite:///catalog.db' #'postgresql://catalog'
+engine = create_engine('postgresql://postgresql-infinite-95989') #'sqlite:///catalog.db' #'postgresql://catalog'
 
 
 Base.metadata.create_all(engine)
