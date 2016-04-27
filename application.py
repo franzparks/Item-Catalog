@@ -30,6 +30,8 @@ CATEGORIES_PER_PAGE = 5
 #number of categories which can be shown per page
 ITEMS_PER_PAGE = 3
 
+SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+
 app = Flask(__name__)
 
 # To prevent cross site request forgery
@@ -51,7 +53,7 @@ APPLICATION_NAME = "Catalog App"
 #postgresql-infinite-95989
 
 # Connect to Database and create database session
-engine = create_engine('postgresql://postgresql-infinite-95989') #'sqlite:///catalog.db' #'postgresql://catalog'
+engine = create_engine(SQLALCHEMY_DATABASE_URI) #'sqlite:///catalog.db' #'postgresql://catalog'
 Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)

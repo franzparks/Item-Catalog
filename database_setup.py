@@ -5,7 +5,7 @@ from sqlalchemy import create_engine
 
 Base = declarative_base()
 
-
+SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
 class User(Base):
     __tablename__ = 'user'
 
@@ -56,7 +56,7 @@ class CatalogItem(Base):
         }      
 
 
-engine = create_engine('postgresql://postgresql-infinite-95989') #'sqlite:///catalog.db' #'postgresql://catalog'
+engine = create_engine(SQLALCHEMY_DATABASE_URI) #'sqlite:///catalog.db' #'postgresql://catalog'
 
 
 Base.metadata.create_all(engine)
