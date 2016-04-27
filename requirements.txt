@@ -11,6 +11,6 @@ oauth2client==2.0.2
 dicttoxml==1.6.6
 dict2xml==1.4
 flask-seasurf==0.2.2
-functools==2.5
+functools==2.7.8
 sqlalchemy.orm==1.0.12
 flask.ext.sqlalchemy==2.1
