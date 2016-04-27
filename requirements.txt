@@ -11,3 +11,7 @@ Werkzeug==0.11.3
 oauth2client==2.0.2
 dicttoxml==1.6.6
 dict2xml==1.4
+flask.ext.seasurf==0.2.2
+requests==0.11.1
+functools==2.5
+sqlalchemy.orm==1.0.12
