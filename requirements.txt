@@ -8,3 +8,6 @@ requests==2.9.1
 six==1.10.0
 SQLAlchemy==1.0.11
 Werkzeug==0.11.3
+oauth2client==2.0.2
+dicttoxml==1.6.6
+dict2xml==1.4
