@@ -72,6 +72,8 @@ To begin:
 
 7. The application can be accessed at: http://localhost:8000/catalog
 
+8. The application can be accessed on Heroku at : http://franz-item-catalog.herokuapp.com/
+
 
 Some notes on the application:
 
